@@ -1,4 +1,5 @@
 import express from 'express';
+import { Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -27,9 +28,13 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // RETURNS
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
   app.get('/filteredimage',
-          async (req, res) =>{
-                let url = req.query.image_url.toString();
+          async (req: Request, res: Response) =>{
+                let url: string = req.query.image_url.toString();
                 const filteredpath = await filterImageFromURL(url);
+
+                if(!url){
+                  return res.status(400).send("Fill in the image url");
+                }
 
                 res.sendFile(filteredpath, ()=>{
                   deleteLocalFiles([filteredpath]);
